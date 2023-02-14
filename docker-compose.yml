@@ -1,0 +1,35 @@
+version: '3.7'
+services:
+  client:
+    build: ./client/
+  nginx:
+    build: ./nginx/
+    depends_on:
+      - client
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/certs:/etc/ssl/private
+    command: [nginx, '-g', 'daemon off;']
+  api:
+    build: ./api/
+    command: gunicorn --bind api:5000 app:app
+    ports:
+      - "5000:5000"
+    secrets:
+      - jira_password
+      - flask_secret
+    volumes:
+      - ./api/db.db:/app/db.db
+    environment:
+      JIRA_URL: {your_jira_url}
+      JIRA_USER: {your_jira_user}
+      JIRA_PASSWORD_FILE: /run/secrets/jira_password
+      FLASK_SECRET_FILE: /run/secrets/flask_secret
+secrets:
+  jira_password:
+    file: ./api/jira_password
+  flask_secret:
+    file: ./api/flask_secret

@@ -1,0 +1,10 @@
+python-dateutil
+jira
+jira-dumper
+gunicorn
+flask
+flask_jwt
+flask_sqlalchemy
+flask_migrate
+flask_script
+flask_bcrypt
